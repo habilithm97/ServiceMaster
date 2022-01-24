@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /*
 *서비스 : 백그라운드에서 실행되는 앱의 구성 요소임
@@ -38,5 +39,22 @@ public class MainActivity extends AppCompatActivity {
                 startService(intent);
             }
         });
+
+        Intent passedIntent = getIntent(); // 액티비티가 새로 만들어질 때 전달된 인텐트 처리
+        processIntent(passedIntent);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) { // 액티비티가 이미 만들어져 있을 때 전달된 인텐트 처리
+        processIntent(intent);
+        super.onNewIntent(intent);
+    }
+
+    private void processIntent(Intent intent) {
+        if(intent != null) {
+            String str = intent.getStringExtra("str");
+
+            Toast.makeText(getApplicationContext(), "전달 받은 문자열 : " + str, Toast.LENGTH_SHORT).show();
+        }
     }
 }

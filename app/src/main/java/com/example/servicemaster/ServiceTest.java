@@ -33,6 +33,12 @@ public class ServiceTest extends Service {
         String str = intent.getStringExtra("str");
 
         Log.d(TAG, "입력한 문자열 : " +  str);
+
+        Intent returnIntent = new Intent(getApplicationContext(), MainActivity.class);
+        // 화면이 없는 곳에서 화면이 있는 곳으로 새로운 태스크를 생성 | 재사용 | 그 위의 다른 화면 제거
+        returnIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        returnIntent.putExtra("str", str + "from ServiceTest.class");
+        startActivity(returnIntent);
     }
 
     @Nullable
