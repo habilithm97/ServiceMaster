@@ -2,17 +2,23 @@ package com.example.servicemaster;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.Random;
+
 /*
 -바인딩(Binding) : 서비스가 서버 역할을 하면서 액티비티와 연결될 수 있도록 만듬
  */
 
 public class ServiceTest extends Service {
+    
+    private final IBinder binder = new BinderTest(); // 클라이언트에 반환되는 바인더
+    private final Random generator = new Random(); // 난수 발생기 생성
 
     private static final String TAG = "ServiceTest";
 
@@ -37,13 +43,23 @@ public class ServiceTest extends Service {
         Intent returnIntent = new Intent(getApplicationContext(), MainActivity.class);
         // 화면이 없는 곳에서 화면이 있는 곳으로 새로운 태스크를 생성 | 재사용 | 그 위의 다른 화면 제거
         returnIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        returnIntent.putExtra("str", str + "from ServiceTest.class");
+        returnIntent.putExtra("str", str + " from ServiceTest.class");
         startActivity(returnIntent);
+    }
+    
+    public class BinderTest extends Binder {
+        ServiceTest getService() {
+            return ServiceTest.this; // 현재 서비스 객체를 반환함
+        }
     }
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public IBinder onBind(Intent intent) { // 클라이언트가 bindService()를 호출하면 이 콜백 메서드가 호출됨
+        return binder; // 인터페이스를 반환함
+    }
+
+    public int getRandomNumber() {
+        return generator.nextInt(100);
     }
 }
