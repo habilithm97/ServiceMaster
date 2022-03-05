@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.servicemaster.MainActivity;
+
 import java.util.Random;
 
 /*
@@ -17,7 +19,8 @@ import java.util.Random;
 
 public class ServiceTest extends Service {
     
-    private final IBinder binder = new BinderTest(); // 클라이언트에 반환되는 바인더
+    private final IBinder binder = new BinderTest(); // 클라이언트에 반환되는 바인더, IBinder는 서비스와 컴포넌트 사이에서 인터페이스 역할을 함
+    // -> 컴포넌트가 서비스에게 연결 요청을 시도하면 서비스는 IBinder를 반환하여 서비스 자신과 통신할 수 있도록 함
     private final Random generator = new Random(); // 난수 발생기 생성
 
     private static final String TAG = "ServiceTest";
@@ -47,7 +50,7 @@ public class ServiceTest extends Service {
         startActivity(returnIntent);
     }
     
-    public class BinderTest extends Binder {
+    public class BinderTest extends Binder { // ServiceTest의 현재 인스턴스를 검색하기 위한 getService() 메서드를 클라이언트에 제공함
         ServiceTest getService() {
             return ServiceTest.this; // 현재 서비스 객체를 반환함
         }

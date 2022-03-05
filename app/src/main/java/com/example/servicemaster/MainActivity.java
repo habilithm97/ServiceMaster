@@ -34,7 +34,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     ServiceTest serviceTest; // 서비스를 하나의 객체로 생성
-    boolean bound = true; // 연결 상태
+    boolean bound = false; // 연결 상태
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(bound) {
+                if(bound) { // 이거 왜 연결이 안 되어 있을 때 발생임?????
                     int num = serviceTest.getRandomNumber();
                     Toast.makeText(getApplicationContext(), "난수 : " + num, Toast.LENGTH_SHORT).show();
                 }
