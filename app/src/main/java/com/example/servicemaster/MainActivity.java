@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,13 +36,30 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    Messenger messenger = null; // 서비스와 통신하는데 사용되는 메신저 객체
+
     ServiceTest serviceTest; // 서비스를 하나의 객체로 생성
-    boolean bound = false; // 연결 상태
+    boolean bound; // 연결 여부
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Button btn3 = (Button)findViewById(R.id.btn3);
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!bound) return;
+                // MessengerService 클래스 안에 정의된 인터페이스를 이용해서 메시지를 보냄
+                Message message = Message.obtain(null, MessengerService.MSG_TEST, 0, 0);
+                try {
+                    messenger.send(message);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         Button btn2 = (Button)findViewById(R.id.btn2);
         btn2.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ServiceTest.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE); // (옵션)첫 번째 바인드면 자동 생성
+
+        bindService(new Intent(this, MessengerService.class), connection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -102,16 +124,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private ServiceConnection connection = new ServiceConnection() { // 서비스 연결 객체
+    private ServiceConnection connection = new ServiceConnection() { // 서비스와 인터페이스를 상호작용하는 클래스, 서비스 연결 객체
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             ServiceTest.BinderTest binder = (ServiceTest.BinderTest)iBinder;
             serviceTest = binder.getService();
+
+            messenger = new Messenger(iBinder);
+
             bound = true; // 연결됨
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
+            messenger = null;
+
             bound = false; // 연결 끊음
         }
     };

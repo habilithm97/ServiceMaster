@@ -29,4 +29,10 @@
         android:layout_height="wrap_content"
         android:text="연결 서비스 시작" />
 
+    <Button
+        android:id="@+id/btn3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="메신저 클래스를 이용한 서비스 시작" />
+
 </LinearLayout>
